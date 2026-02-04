@@ -6,9 +6,11 @@ export interface IProduct extends Document {
   sale_price?: number | null;
   images: string[];
   description: string;
-  features: string[];      // ⭐ NEW
+  features: string[];      
   category: string;
   stock: number;
+  rating: number;      
+  rating_count: number;
 }
 
 const ProductSchema: Schema<IProduct> = new Schema(
@@ -18,9 +20,11 @@ const ProductSchema: Schema<IProduct> = new Schema(
     sale_price: { type: Number, default: null },
     images: { type: [String], required: true },
     description: { type: String, required: true },
-    features: { type: [String], required: true }, // ⭐ NEW
+    features: { type: [String], required: true }, 
     category: { type: String, required: true },
     stock: { type: Number, required: true },
+    rating: { type: Number, default: 0 },      
+    rating_count: { type: Number, default: 0 },
   },
   { timestamps: true }
 );

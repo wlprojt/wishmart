@@ -100,7 +100,7 @@ export default function AddProductPage({ session }: { session: Session }) {
 
     // --- API call ---
     try {
-      const res = await fetch("/api/products", {
+      const res = await fetch("/api/admin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

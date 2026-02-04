@@ -85,7 +85,7 @@ function PromoCard({
   button: string;
 }) {
   return (
-    <div className="relative h-56 md:h-64 lg:h-72 rounded-lg shadow-lg overflow-hidden group">
+    <div className="relative h-56 md:h-64 lg:h-72 rounded-xl shadow-lg overflow-hidden group">
       {/* Background Image */}
       <Image
         src={image}

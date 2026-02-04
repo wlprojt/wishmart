@@ -20,7 +20,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
 
   // --------------- Fetch Product ---------------
   const fetchProduct = async () => {
-    const res = await fetch(`/api/products/${id}`);
+    const res = await fetch(`/api/admin/${id}`);
     const data = await res.json();
 
     setTitle(data.title);
@@ -89,7 +89,7 @@ export default function EditProductPage({ params }: { params: Promise<{ id: stri
     }
 
     // --- API call ---
-    const res = await fetch(`/api/products/${id}`, {
+    const res = await fetch(`/api/admin/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

@@ -22,7 +22,7 @@ export default function ProductsAdminPage({ session }: { session: any }) {
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch("/api/products");
+      const res = await fetch("/api/admin");
       const data = await res.json();
       setProducts(Array.isArray(data) ? data : []);
     } catch (err) {
@@ -37,7 +37,7 @@ export default function ProductsAdminPage({ session }: { session: any }) {
     const ok = confirm("Are you sure you want to delete this product?");
     if (!ok) return;
 
-    const res = await fetch(`/api/products/${id}`, { method: "DELETE" });
+    const res = await fetch(`/api/admin/${id}`, { method: "DELETE" });
 
     if (res.ok) {
       setProducts((prev) => prev.filter((p) => p._id !== id));
@@ -124,15 +124,23 @@ export default function ProductsAdminPage({ session }: { session: any }) {
 
             <h2 className="text-xl font-semibold mt-3">{product.title}</h2>
 
-            <p className="text-gray-600">
-              Price:
-              {product.price && (
-                <span className="line-through text-red-500 mx-2">
-                  ₹{product.price}
+            {/* Price */}
+            <div className="mt-2">
+              {product.sale_price ? (
+                <div className="flex items-center gap-2">
+                  <span className="text-gray-400 line-through text-sm">
+                    ${product.price.toFixed(2)}
+                  </span>
+                  <span className="text-gray-900 font-semibold">
+                    ${product.sale_price.toFixed(2)}
+                  </span>
+                </div>
+              ) : (
+                <span className="text-gray-900 font-semibold">
+                  ${product.price.toFixed(2)}
                 </span>
               )}
-               ₹{product.sale_price}
-            </p>
+            </div>
 
             <p className="text-sm text-gray-500">{product.category}</p>
 

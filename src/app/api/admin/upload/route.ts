@@ -1,4 +1,4 @@
-// src/app/api/upload/route.ts
+// src/app/api/admin/upload/route.ts
 
 import { NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";

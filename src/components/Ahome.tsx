@@ -54,7 +54,7 @@ export default function Ahome({ session }: { session: any }) {
     formData.append("file", file);
 
     try {
-      const res = await fetch("/api/upload", {
+      const res = await fetch("/api/admin/upload", {
         method: "POST",
         body: formData,
       });
