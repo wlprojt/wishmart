@@ -5,14 +5,56 @@ import { Search, ShoppingCart, CircleUser} from "lucide-react";
 import Image from "next/image";
 import { IoMdCart } from "react-icons/io";
 import { Menu, X } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [query, setQuery] = useState("");
+  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+  if (!mobileSearchOpen) return;
+
+  const handler = (e: MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (!target.closest("#mobile-search")) {
+      setMobileSearchOpen(false);
+      setQuery("");
+      setSuggestions([]);
+    }
+  };
+
+  document.addEventListener("mousedown", handler);
+  return () => document.removeEventListener("mousedown", handler);
+}, [mobileSearchOpen]);
+
+
+
+  useEffect(() => {
+  if (query.length < 2) {
+    setSuggestions([]);
+    return;
+  }
+
+  const timer = setTimeout(async () => {
+    setLoading(true);
+    const res = await fetch(`/api/products/suggestions?q=${query}`);
+    const data = await res.json();
+    setSuggestions(data);
+    setLoading(false);
+  }, 300); // debounce
+
+  return () => clearTimeout(timer);
+}, [query]);
+
+
 
   return (
-    <header className="w-full">
+    <header className="w-full h-auto sticky top-0 z-50 shadow-md">
       {/* Top bar */}
       <div className="bg-blue-700 text-white text-sm">
         <div className="hidden lg:flex max-w-7xl mx-auto justify-between items-center px-4 py-2">
@@ -54,21 +96,67 @@ export default function Navbar() {
 
           {/* Search */}
           <div className="bg-white rounded-md">
-            <div className="hidden lg:flex justify-between relative w-60">
+            {/* <div className="hidden lg:flex justify-between relative w-60"> */}
+              {/* Search */}
+            <div
+              className={`hidden lg:block relative transition-all duration-300 ease-in-out
+                ${searchFocused ? "w-96" : "w-60"}
+              `}
+            >
               <input
                 type="text"
-                placeholder="Search product ..."
-                className="w-full rounded-md px-4 py-2 pr-10 text-sm outline-none"
+                placeholder="Search product..."
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                onFocus={() => setSearchFocused(true)}
+                onBlur={() => {
+                  // delay so click on suggestion still works
+                  setTimeout(() => setSearchFocused(false), 150);
+                }}
+                className="w-full rounded-md px-4 py-2 pr-10 text-sm text-black outline-none"
               />
-              <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-500 w-4 h-4" />
+
+              <Search className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-blue-500 w-4 h-4" />
+
+              {/* Suggestions */}
+              {suggestions.length > 0 && (
+                <div className="absolute top-full left-0 right-0 bg-white shadow-xl rounded-md mt-1 z-[999] border">
+                  {suggestions.map((item) => (
+                    <Link
+                      key={item._id}
+                      href={`/products/${item._id}`}
+                      onClick={() => {
+                        setQuery("");
+                        setSuggestions([]);
+                        setSearchFocused(false);
+                      }}
+                      className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-sm text-black"
+                    >
+                      <Image
+                        src={item.images?.[0] || "/placeholder.png"}
+                        alt={item.title}
+                        width={40}
+                        height={40}
+                        className="rounded object-cover"
+                      />
+                      <span className="line-clamp-1">{item.title}</span>
+                    </Link>
+                  ))}
+                </div>
+              )}
             </div>
+
+
+              {/* <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-blue-500 w-4 h-4" />
+            </div> */}
           </div>
 
           {/* Actions */}
           <div className="flex lg:hidden items-center gap-5 text-white">
-            <button className="relative">
-              <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-white w-4 h-4" />
+            <button onClick={() => setMobileSearchOpen(true)}>
+              <Search className="w-5 h-5" />
             </button>
+
 
             <button className="relative">
               <ShoppingCart className="w-5 h-5" />
@@ -86,6 +174,65 @@ export default function Navbar() {
         </div>
       </div>
       <hr className="border-t border-gray-500" />
+
+      {/* Mobile Search */}
+      <div
+        id="mobile-search"
+        className={`lg:hidden bg-blue-600 overflow-hidden transition-all duration-300
+          ${mobileSearchOpen ? "max-h-960 py-3" : "max-h-0"}
+        `}
+      >
+
+        <div className="relative px-4">
+          <input
+            type="text"
+            autoFocus
+            placeholder="Search product..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            className="w-full bg-white rounded-md px-4 py-3 pr-10 text-sm text-black outline-none"
+          />
+
+          <button
+            onClick={() => {
+              setMobileSearchOpen(false);
+              setSuggestions([]);
+              setQuery("");
+            }}
+            className="absolute right-7 top-1/2 -translate-y-1/2"
+          >
+            <X className="w-5 h-5 text-gray-500" />
+          </button>
+
+          {/* Suggestions */}
+          {suggestions.length > 0 && (
+            <div className="relative px-4 bg-white shadow-xl rounded-md mt-2 border">
+              {suggestions.map((item) => (
+                <Link
+                  key={item._id}
+                  href={`/products/${item._id}`}
+                  onClick={() => {
+                    setMobileSearchOpen(false);
+                    setQuery("");
+                    setSuggestions([]);
+                  }}
+                  className="flex items-center gap-3 px-4 py-2 hover:bg-gray-100 text-sm text-black"
+                >
+                  <Image
+                    src={item.images?.[0] || "/placeholder.png"}
+                    alt={item.title}
+                    width={40}
+                    height={40}
+                    className="rounded object-cover"
+                  />
+                  <span className="line-clamp-1">{item.title}</span>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
 
       {/* Mobile Menu */}
         {mobileMenuOpen && (

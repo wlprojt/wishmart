@@ -1,5 +1,6 @@
 import Image from "next/image";
 import GoldenStarRating from "./GoldenStarRating";
+import Link from "next/dist/client/link";
 
 type Product = {
   _id: string;
@@ -37,7 +38,11 @@ export default function KitchenAppliances({ products }: Props) {
           const hoverImage = product.images[1] ?? product.images[0];
 
           return (
-            <div key={product._id} className="group relative">
+            <Link
+              key={product._id}
+              href={`/products/${product._id}`}
+              className="group block"
+            >
               <div className="relative bg-gray-100 rounded-lg overflow-hidden">
                 {product.sale_price && (
                   <span className="absolute top-4 left-4 bg-white text-xs px-2 py-1 rounded-lg shadow z-10">
@@ -55,36 +60,21 @@ export default function KitchenAppliances({ products }: Props) {
                 />
 
                 {/* Hover Image */}
-                {product.images[1] && (
-                  <Image
-                    src={hoverImage}
-                    alt={product.title}
-                    width={400}
-                    height={400}
-                    className="object-contain w-full h-70 absolute top-0 left-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
-                  />
-                )}
+                <Image
+                  src={hoverImage}
+                  alt={product.title}
+                  width={400}
+                  height={400}
+                  className="object-contain w-full h-70 absolute top-0 left-0 opacity-0 transition-opacity duration-700 group-hover:opacity-100"
+                />
 
-                {/* Add to Cart Button */}
+                {/* Add to Cart */}
                 <button
+                  onClick={(e) => e.preventDefault()}
                   className="absolute bottom-4 right-4 bg-gray-50 text-gray-500 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg"
                   aria-label="Add to Cart"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.8"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    className="w-5 h-5"
-                    >
-                    <circle cx="9" cy="21" r="1" />
-                    <circle cx="20" cy="21" r="1" />
-                    <path d="M1 1h4l2.6 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6" />
-                  </svg>
-
+                  🛒
                 </button>
               </div>
 
@@ -100,19 +90,21 @@ export default function KitchenAppliances({ products }: Props) {
                 {product.title}
               </h3>
 
-              <div className="mt-1 mb-10">
+              <div className="mt-1 mb-4">
                 {product.sale_price ? (
                   <>
                     <span className="text-gray-400 line-through mr-2">
                       ${product.price}
                     </span>
-                    <span className="font-bold">${product.sale_price}</span>
+                    <span className="font-bold">
+                      ${product.sale_price}
+                    </span>
                   </>
                 ) : (
                   <span className="font-bold">${product.price}</span>
                 )}
               </div>
-            </div>
+            </Link>
           );
         })}
       </div>
