@@ -1,13 +1,41 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function ProductActions({
   stock,
+  productId,
 }: {
   stock: number;
+  productId: string;
 }) {
+  const router = useRouter();
   const [qty, setQty] = useState(1);
+
+  const handleAddToCart = async (productId: string) => {
+    try {
+      const res = await fetch("/api/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ productId, qty: 1 }),
+      });
+
+      if (res.status === 401) {
+        // 🚦 Not logged in → redirect to login
+        router.push("/dashboard"); // or /auth if you have a login page
+        return;
+      }
+
+      if (!res.ok) throw new Error("Failed to add to cart");
+
+      // 🔔 Notify navbar
+      window.dispatchEvent(new Event("cart-updated"));
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <div className="flex items-center gap-4 mt-6">
@@ -37,13 +65,16 @@ export default function ProductActions({
       {/* Add to Cart */}
       <button
         disabled={stock === 0}
-        onClick={() => {
-          console.log("Add to cart", { qty });
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          handleAddToCart(productId);
         }}
-        className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
+        className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700"
       >
         Add to cart
       </button>
+
     </div>
   );
 }

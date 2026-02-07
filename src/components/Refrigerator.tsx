@@ -1,6 +1,7 @@
 import Image from "next/image";
 import GoldenStarRating from "./GoldenStarRating";
 import Link from "next/dist/client/link";
+import { useRouter } from "next/navigation";
 
 type Product = {
   _id: string;
@@ -17,9 +18,34 @@ type Props = {
 };
 
 export default function Refrigerator({ products }: Props) {
+  const router = useRouter();
   if (!products.length) return null;
 
   const displayedProducts = products.slice(0, 4);
+
+  const handleAddToCart = async (productId: string) => {
+    try {
+      const res = await fetch("/api/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ productId, qty: 1 }),
+      });
+
+      if (res.status === 401) {
+        // 🚦 Not logged in → redirect to login
+        router.push("/dashboard"); // or /auth if you have a login page
+        return;
+      }
+
+      if (!res.ok) throw new Error("Failed to add to cart");
+
+      // 🔔 Notify navbar
+      window.dispatchEvent(new Event("cart-updated"));
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <section className="bg-white p-6 rounded-lg shadow">
@@ -70,7 +96,11 @@ export default function Refrigerator({ products }: Props) {
 
                 {/* Add to Cart */}
                 <button
-                  onClick={(e) => e.preventDefault()}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleAddToCart(product._id);
+                  }}
                   className="absolute bottom-4 right-4 bg-gray-50 text-gray-500 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg"
                   aria-label="Add to Cart"
                 >

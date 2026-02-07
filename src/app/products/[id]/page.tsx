@@ -103,7 +103,7 @@ const normalizedRelatedProducts = relatedProducts.map((p) => ({
           )}
 
           {/* Quantity + Cart */}
-          <ProductActions stock={product.stock} />
+          <ProductActions stock={product.stock} productId={product._id.toString()} />
 
           <hr className="my-4" />
 

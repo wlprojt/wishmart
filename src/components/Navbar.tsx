@@ -6,7 +6,17 @@ import Image from "next/image";
 import { IoMdCart } from "react-icons/io";
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Button } from "./ui/button";
+import { useRouter } from "next/navigation";
 
+
+
+type UserType = {
+  id: string;
+  email: string;
+  emailVerified: boolean;
+  createdAt: string;
+};
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -15,6 +25,85 @@ export default function Navbar() {
   const [searchFocused, setSearchFocused] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [cartCount, setCartCount] = useState(0);
+  const router = useRouter();
+  const [user, setUser] = useState<UserType | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
+
+useEffect(() => {
+  async function initAuthAndCart() {
+    try {
+      // 1️⃣ ensure JWT exists (Google → BetterAuth → JWT)
+      await fetch("/api/auth/session-to-jwt", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      // 2️⃣ fetch user
+      const userRes = await fetch("/api/auth/me", {
+        credentials: "include",
+      });
+
+      if (userRes.ok) {
+        const data = await userRes.json();
+        setUser(data);
+
+        // 3️⃣ NOW cart is valid → load count
+        await loadCartCount();
+      } else {
+        setUser(null);
+        setCartCount(0);
+      }
+    } catch {
+      setUser(null);
+      setCartCount(0);
+    } finally {
+      setAuthLoading(false);
+    }
+  }
+
+  initAuthAndCart();
+}, []);
+
+
+const loadCartCount = async () => {
+  try {
+    const res = await fetch("/api/cart/count", {
+      credentials: "include",
+    });
+    const data = await res.json();
+    setCartCount(data.count || 0);
+  } catch {
+    setCartCount(0);
+  }
+};
+
+
+useEffect(() => {
+  // initial load
+  loadCartCount();
+
+  // update on cart changes
+  window.addEventListener("cart-updated", loadCartCount);
+
+  return () => {
+    window.removeEventListener("cart-updated", loadCartCount);
+  };
+}, []);
+
+
+const fetchCartCount = async () => {
+  const res = await fetch("/api/cart/count", {
+    credentials: "include",
+  });
+  const data = await res.json();
+  setCartCount(data.count || 0);
+};
+
+
+
+// if (authLoading) return null;
+
 
   useEffect(() => {
   if (!mobileSearchOpen) return;
@@ -112,6 +201,7 @@ export default function Navbar() {
                 onBlur={() => {
                   // delay so click on suggestion still works
                   setTimeout(() => setSearchFocused(false), 150);
+                  setQuery("");
                 }}
                 className="w-full rounded-md px-4 py-2 pr-10 text-sm text-black outline-none"
               />
@@ -157,19 +247,33 @@ export default function Navbar() {
               <Search className="w-5 h-5" />
             </button>
 
-
+            <Link href="/cart">
             <button className="relative">
               <ShoppingCart className="w-5 h-5" />
-              <span className="absolute -top-2 -right-2 bg-white text-blue-600 text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                0
-              </span>
-            </button>
 
-            <Link href="/dashboard" className="font-normal hover:underline">
-              <button className="relative">
-              <CircleUser className="w-6 h-6" />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-white text-blue-600 text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
             </button>
             </Link>
+
+
+            {/* LOGIN */}
+            {user ? (
+              <Link href="/dashboard" className="font-normal hover:underline">
+              <button className="relative">
+              <CircleUser className="w-5 h-5" />
+              </button>
+              </Link>
+            ) : (
+              <Link href="/dashboard" className="font-normal hover:underline">
+              <button className="relative">
+              Login
+              </button>
+              </Link>
+            )}
           </div>
         </div>
       </div>
@@ -263,18 +367,32 @@ export default function Navbar() {
             <Link href="#" className="hover:opacity-80">Today&apos;s deal</Link>
             <Link href="#" className="hover:opacity-80">Gift cards</Link>
 
+            <Link href="/cart">
             <button className="relative">
               <ShoppingCart className="w-5 h-5" />
-              <span className="absolute -top-2 -right-2 bg-white text-blue-600 text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                0
-              </span>
-            </button>
 
-            <Link href="/dashboard" className="font-normal hover:underline">
-              <button className="relative">
-              <CircleUser className="w-6 h-6" />
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-white text-blue-600 text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
             </button>
             </Link>
+
+            {/* LOGIN */}
+            {user ? (
+              <Link href="/dashboard" className="font-normal hover:underline">
+              <button className="relative">
+              <CircleUser className="w-5 h-5" />
+              </button>
+              </Link>
+            ) : (
+              <Link href="/dashboard" className="font-normal hover:underline">
+              <button className="relative">
+              Login
+              </button>
+              </Link>
+            )}
 
         </div>
       </div>

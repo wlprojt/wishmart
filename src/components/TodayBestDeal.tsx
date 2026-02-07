@@ -1,7 +1,10 @@
 // src/components/TodayBestDeal.tsx
+"use client";
+
 import Image from "next/image";
 import GoldenStarRating from "./GoldenStarRating";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 type Product = {
   _id: string;
@@ -18,9 +21,35 @@ type Props = {
 };
 
 export default function TodayBestDeal({ products }: Props) {
+  const router = useRouter();
+
   if (!products.length) return null;
 
   const displayedProducts = products.slice(0, 8);
+
+  const handleAddToCart = async (productId: string) => {
+    try {
+      const res = await fetch("/api/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ productId, qty: 1 }),
+      });
+
+      if (res.status === 401) {
+        // 🚦 Not logged in → redirect to login
+        router.push("/dashboard"); // or /auth if you have a login page
+        return;
+      }
+
+      if (!res.ok) throw new Error("Failed to add to cart");
+
+      // 🔔 Notify navbar
+      window.dispatchEvent(new Event("cart-updated"));
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <section className="bg-white p-6 rounded-lg shadow">
@@ -35,16 +64,14 @@ export default function TodayBestDeal({ products }: Props) {
       {/* Products */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
         {displayedProducts.map((product) => {
-          const mainImage =
-            product.images?.[0] ?? "/placeholder.png";
-          const hoverImage =
-            product.images?.[1] ?? mainImage;
+          const mainImage = product.images?.[0] ?? "/placeholder.png";
+          const hoverImage = product.images?.[1] ?? mainImage;
 
           return (
             <Link
               key={product._id}
               href={`/products/${product._id}`}
-              className="group block"
+              className="group block relative"
             >
               <div className="relative bg-gray-100 rounded-lg overflow-hidden">
                 {product.sale_price && (
@@ -53,7 +80,6 @@ export default function TodayBestDeal({ products }: Props) {
                   </span>
                 )}
 
-                {/* Main Image */}
                 <Image
                   src={mainImage}
                   alt={product.title}
@@ -61,8 +87,6 @@ export default function TodayBestDeal({ products }: Props) {
                   height={400}
                   className="object-contain w-full h-70 transition-opacity duration-700 group-hover:opacity-0"
                 />
-
-                {/* Hover Image */}
                 <Image
                   src={hoverImage}
                   alt={product.title}
@@ -73,7 +97,11 @@ export default function TodayBestDeal({ products }: Props) {
 
                 {/* Add to Cart */}
                 <button
-                  onClick={(e) => e.preventDefault()}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleAddToCart(product._id);
+                  }}
                   className="absolute bottom-4 right-4 bg-gray-50 text-gray-500 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-lg"
                   aria-label="Add to Cart"
                 >
@@ -81,27 +109,18 @@ export default function TodayBestDeal({ products }: Props) {
                 </button>
               </div>
 
-              {/* Rating */}
               <div className="mt-1 flex items-center gap-2">
                 <GoldenStarRating value={product.rating ?? 0} />
-                <span className="text-xs text-gray-500">
-                  ({product.rating_count ?? 0})
-                </span>
+                <span className="text-xs text-gray-500">({product.rating_count ?? 0})</span>
               </div>
 
-              <h3 className="mt-3 text-sm font-semibold line-clamp-2">
-                {product.title}
-              </h3>
+              <h3 className="mt-3 text-sm font-semibold line-clamp-2">{product.title}</h3>
 
               <div className="mt-1 mb-4">
                 {product.sale_price ? (
                   <>
-                    <span className="text-gray-400 line-through mr-2">
-                      ${product.price}
-                    </span>
-                    <span className="font-bold">
-                      ${product.sale_price}
-                    </span>
+                    <span className="text-gray-400 line-through mr-2">${product.price}</span>
+                    <span className="font-bold">${product.sale_price}</span>
                   </>
                 ) : (
                   <span className="font-bold">${product.price}</span>

@@ -1,11 +1,7 @@
-// src/app/dashboard/page.tsx
-"use client"; // we need client for fetch and useEffect
+"use client";
 
 import { useEffect, useState } from "react";
-import { redirect } from "next/navigation";
-import { verifyToken } from "@/lib/jwt";
-import { authClient } from "@/lib/auth-client";
-// import { cookies } from "next/headers";
+import { useRouter } from "next/navigation";
 
 type UserType = {
   id: string;
@@ -15,28 +11,27 @@ type UserType = {
 };
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Client-side fetch to convert session → JWT
   useEffect(() => {
     async function ensureJwtAndFetchUser() {
       try {
-        // Call session-to-jwt to get JWT cookie
+        // Convert Better-Auth session → JWT
         await fetch("/api/auth/session-to-jwt", {
           method: "POST",
-          credentials: "include", // important to set cookie
+          credentials: "include",
         });
 
-        // Now call /api/auth/me to get current user
+        // Fetch current user
         const res = await fetch("/api/auth/me", {
           method: "GET",
-          credentials: "include", // include cookie
+          credentials: "include",
         });
 
         if (!res.ok) {
-          // Not authenticated → redirect to login
-          redirect("/login");
+          router.replace("/login");
           return;
         }
 
@@ -44,23 +39,37 @@ export default function DashboardPage() {
         setUser(data);
       } catch (err) {
         console.error("Failed to fetch user:", err);
-        redirect("/login");
+        router.replace("/login");
       } finally {
         setLoading(false);
       }
     }
 
     ensureJwtAndFetchUser();
-  }, []);
+  }, [router]);
 
   async function logout() {
-    // call API to delete cookie
+  try {
+    // 1️⃣ call logout API
     await fetch("/api/auth/logout", {
       method: "POST",
       credentials: "include",
     });
-    redirect("/login");
+
+    // 2️⃣ clear client-side state
+    setUser(null); // If Navbar stores user in useState
+
+    // 3️⃣ refresh server components (if you rely on server session)
+    router.refresh();
+
+    // ✅ HARD reload + redirect
+    window.location.href = "/login";
+  } catch (err) {
+    console.error("Logout failed:", err);
   }
+}
+
+
 
   if (loading) {
     return (
