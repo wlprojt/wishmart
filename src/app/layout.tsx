@@ -28,11 +28,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // ✅ Fetch session on server
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
   return (
     <html lang="en">
       <body

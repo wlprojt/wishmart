@@ -143,7 +143,7 @@ const fetchCartCount = async () => {
 
 
   return (
-    <header className="w-full h-auto sticky top-0 z-50 shadow-md">
+    <header className="w-full h-auto top-0 z-50 shadow-md">
       {/* Top bar */}
       <div className="bg-blue-700 text-white text-sm">
         <div className="hidden lg:flex max-w-7xl mx-auto justify-between items-center px-4 py-2">
@@ -201,7 +201,6 @@ const fetchCartCount = async () => {
                 onBlur={() => {
                   // delay so click on suggestion still works
                   setTimeout(() => setSearchFocused(false), 150);
-                  setQuery("");
                 }}
                 className="w-full rounded-md px-4 py-2 pr-10 text-sm text-black outline-none"
               />
@@ -342,7 +341,7 @@ const fetchCartCount = async () => {
         {mobileMenuOpen && (
         <div className="lg:hidden bg-blue-600 border-t border-white/20">
             <nav className="flex flex-col text-white text-sm px-6 py-4 space-y-4">
-            <Link href="#" onClick={() => setMobileMenuOpen(false)}>All products</Link>
+            <Link href="/shop" onClick={() => setMobileMenuOpen(false)}>All products</Link>
             <Link href="#" onClick={() => setMobileMenuOpen(false)}>Home appliances</Link>
             <Link href="#" onClick={() => setMobileMenuOpen(false)}>Audio & video</Link>
             <Link href="#" onClick={() => setMobileMenuOpen(false)}>Refrigerator</Link>
@@ -359,7 +358,7 @@ const fetchCartCount = async () => {
         <div className="hidden lg:flex max-w-7xl mx-auto text-white font-bold flex justify-between items-center gap-6 px-4 py-3">
 
 
-            <Link href="#" className="hover:opacity-80">All products</Link>
+            <Link href="/shop" className="hover:opacity-80">All products</Link>
             <Link href="#" className="hover:opacity-80">Home appliances</Link>
             <Link href="#" className="hover:opacity-80">Audio & video</Link>
             <Link href="#" className="hover:opacity-80">Refrigerator</Link>

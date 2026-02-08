@@ -123,3 +123,29 @@
     @apply bg-background text-foreground;
   }
 }
+
+.range-input {
+  @apply absolute w-full h-2 bg-transparent pointer-events-none appearance-none;
+}
+
+.range-input::-webkit-slider-thumb {
+  appearance: none;
+  pointer-events: auto;
+  height: 14px;
+  width: 14px;
+  border-radius: 9999px;
+  background: #2563eb;
+  cursor: pointer;
+  position: relative;
+  z-index: 50;
+}
+
+.range-input::-moz-range-thumb {
+  pointer-events: auto;
+  height: 14px;
+  width: 14px;
+  border-radius: 9999px;
+  background: #2563eb;
+  cursor: pointer;
+}
+
