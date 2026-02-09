@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 type PromoItem = {
   title: string;
@@ -43,9 +44,9 @@ export default function PromoCategories() {
                 {item.title}
               </h3>
               <p className="text-gray-500 mt-2">{item.priceText}</p>
-              <button className="mt-4 text-blue-600 font-medium hover:underline">
+              <Link href="/shop?category=Gadgets&page=1" className="mt-4 text-blue-600 font-medium hover:underline">
                 Shop now
-              </button>
+              </Link>
             </div>
 
             {/* Image */}

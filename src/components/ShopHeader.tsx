@@ -2,9 +2,11 @@
 import SortDropdown from "./SortDropdown";
 
 export default function ShopHeader({
+  title,
   total,
   page,
 }: {
+  title: string;
   total: number;
   page: number;
 }) {
@@ -14,7 +16,7 @@ export default function ShopHeader({
   return (
     <div className="mb-8">
       <h1 className="text-5xl font-bold text-blue-600">
-        Shop
+        {title}
       </h1>
 
       <div className="flex justify-between items-center mt-6 text-gray-500">

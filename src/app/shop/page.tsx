@@ -63,7 +63,7 @@ export default async function Shop({
         <ShopSidebar />
 
         <div>
-          <ShopHeader total={data.total} page={page} />
+          <ShopHeader title={params.category || "All Products"} total={data.total} page={page} />
           <ProductGrid products={data.products} />
           <Pagination page={page} pages={data.pages} />
         </div>

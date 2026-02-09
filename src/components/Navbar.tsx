@@ -342,11 +342,11 @@ const fetchCartCount = async () => {
         <div className="lg:hidden bg-blue-600 border-t border-white/20">
             <nav className="flex flex-col text-white text-sm px-6 py-4 space-y-4">
             <Link href="/shop" onClick={() => setMobileMenuOpen(false)}>All products</Link>
-            <Link href="#" onClick={() => setMobileMenuOpen(false)}>Home appliances</Link>
-            <Link href="#" onClick={() => setMobileMenuOpen(false)}>Audio & video</Link>
-            <Link href="#" onClick={() => setMobileMenuOpen(false)}>Refrigerator</Link>
+            <Link href="/shop?category=Home+appliances&page=1" onClick={() => setMobileMenuOpen(false)}>Home appliances</Link>
+            <Link href="/shop?category=Audio+%26+video&page=1" onClick={() => setMobileMenuOpen(false)}>Audio & video</Link>
+            <Link href="/shop?category=Refrigerator&page=1" onClick={() => setMobileMenuOpen(false)}>Refrigerator</Link>
             <Link href="#" onClick={() => setMobileMenuOpen(false)}>New arrivals</Link>
-            <Link href="#" onClick={() => setMobileMenuOpen(false)}>Today&apos;s deal</Link>
+            <Link href="/sale" onClick={() => setMobileMenuOpen(false)}>Today&apos;s deal</Link>
             <Link href="#" onClick={() => setMobileMenuOpen(false)}>Gift cards</Link>
             </nav>
         </div>
@@ -359,13 +359,12 @@ const fetchCartCount = async () => {
 
 
             <Link href="/shop" className="hover:opacity-80">All products</Link>
-            <Link href="#" className="hover:opacity-80">Home appliances</Link>
-            <Link href="#" className="hover:opacity-80">Audio & video</Link>
-            <Link href="#" className="hover:opacity-80">Refrigerator</Link>
+            <Link href="/shop?category=Home+appliances&page=1" className="hover:opacity-80">Home appliances</Link>
+            <Link href="/shop?category=Audio+%26+video&page=1" className="hover:opacity-80">Audio & video</Link>
+            <Link href="/shop?category=Refrigerator&page=1" className="hover:opacity-80">Refrigerator</Link>
             <Link href="#" className="hover:opacity-80">New arrivals</Link>
-            <Link href="#" className="hover:opacity-80">Today&apos;s deal</Link>
+            <Link href="/sale" className="hover:opacity-80">Today&apos;s deal</Link>
             <Link href="#" className="hover:opacity-80">Gift cards</Link>
-
             <Link href="/cart">
             <button className="relative">
               <ShoppingCart className="w-5 h-5" />

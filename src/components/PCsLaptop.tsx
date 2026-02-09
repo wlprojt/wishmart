@@ -52,7 +52,7 @@ export default function PCsLaptop({ products }: Props) {
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">PCs & Laptops</h2>
-        <a href="/category/pcs-laptops" className="text-blue-600 font-medium">
+        <a href="/shop?category=PCs+%26+laptop&page=1" className="text-blue-600 font-medium">
           See more
         </a>
       </div>

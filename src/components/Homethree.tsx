@@ -11,6 +11,7 @@ import KitchenAppliances from "./KitchenAppliances";
 import PCsLaptop from "./PCsLaptop";
 import Gadget from "./Gadget​";
 import Refrigerator from "./Refrigerator";
+import Link from "next/link";
 
 type Product = {
   _id: string;
@@ -91,12 +92,14 @@ export default function Homethree() {
         <AirConditioner products={airConditionerProducts} />
       </div>
       <div className="max-w-7xl lg:mx-auto mx-4 my-8 shadow-sm rounded-lg overflow-hidden">
+        <Link href="/shop?category=PCs+%26+laptop&page=1">
         <Image
           src="/bannerone.jpg"
           alt="Promotional Banner"
           width={1500}
           height={300}
         />
+        </Link>
       </div>
       <div className="max-w-7xl lg:mx-auto mx-4 my-8 border border-gray-300 shadow-sm rounded-lg overflow-hidden">
         <KitchenAppliances products={kitchenAppliancesProducts} />

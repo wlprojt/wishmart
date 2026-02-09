@@ -52,7 +52,7 @@ export default function Gadget({ products }: Props) {
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Gadgets</h2>
-        <a href="/category/gadgets" className="text-blue-600 font-medium">
+        <a href="/shop?category=Gadgets&page=1" className="text-blue-600 font-medium">
           See more
         </a>
       </div>

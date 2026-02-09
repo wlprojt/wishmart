@@ -8,14 +8,14 @@ type Category = {
 };
 
 const categories: Category[] = [
-  { title: "Air Conditioner", count: 4, image: "/ac.jpg" },
-  { title: "Audio & Video", count: 5, image: "/tv.jpg" },
+  { title: "Air conditioner", count: 4, image: "/ac.jpg" },
+  { title: "Audio & video", count: 5, image: "/tv.jpg" },
   { title: "Gadgets", count: 6, image: "/phone.jpg" },
-  { title: "Home Appliances", count: 5, image: "/washing.jpg" },
-  { title: "Kitchen Appliances", count: 6, image: "/oven.jpg" },
-  { title: "PCs & Laptop", count: 4, image: "/laptop.jpg" },
+  { title: "Home appliances", count: 5, image: "/washing.jpg" },
+  { title: "Kitchen appliances", count: 6, image: "/oven.jpg" },
+  { title: "PCs & laptop", count: 4, image: "/laptop.jpg" },
   { title: "Refrigerator", count: 4, image: "/fridge.jpg" },
-  { title: "Smart Home", count: 5, image: "/smart.jpg" },
+  { title: "Smart home", count: 5, image: "/smart.jpg" },
 ];
 
 const Hometwo = () => {
@@ -29,7 +29,13 @@ const Hometwo = () => {
         {categories.map((cat) => (
           <Link
             key={cat.title}
-            href={`http://localhost:3000/${cat.title.toLowerCase().replace(" ", "-")}`}
+            href={{
+              pathname: "/shop",
+              query: {
+                category: cat.title,
+                page: 1,
+              },
+            }}
             className="group flex flex-col items-center text-center"
           >
             <div className="relative w-40 h-40 md:w-60 md:h-60 flex items-center justify-center">
@@ -107,7 +113,7 @@ function PromoCard({
         <div className="w-25 h-[2px] bg-white my-4" />
 
         <Link
-          href="/"
+          href="/shop?category=Gadgets&page=1"
           className="text-sm font-semibold tracking-wide hover:underline"
         >
           {button}

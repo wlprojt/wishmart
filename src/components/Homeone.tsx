@@ -41,7 +41,7 @@ const Homeone = () => {
 
           {/* CTA */}
           <Link
-            href="#"
+            href="/shop?category=Audio+%26+video&page=1"
             className="inline-block mt-4 md:mt-6 text-blue-600 font-semibold hover:underline"
           >
             Shop now →

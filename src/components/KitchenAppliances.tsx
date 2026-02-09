@@ -52,7 +52,7 @@ export default function KitchenAppliances({ products }: Props) {
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Kitchen Appliances</h2>
-        <a href="/category/kitchen-appliances" className="text-blue-600 font-medium">
+        <a href="/shop?category=Kitchen+appliances&page=1" className="text-blue-600 font-medium">
           See more
         </a>
       </div>

@@ -20,12 +20,12 @@ type Props = {
   products: Product[];
 };
 
-export default function TodayBestDeal({ products }: Props) {
+export default function TodayDeal({ products }: Props) {
   const router = useRouter();
 
   if (!products.length) return null;
 
-  const displayedProducts = products.slice(0, 8);
+  const displayedProducts = products.slice(0, 40);
 
   const handleAddToCart = async (productId: string) => {
     try {
@@ -53,13 +53,6 @@ export default function TodayBestDeal({ products }: Props) {
 
   return (
     <section className="bg-white p-6 rounded-lg shadow">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Today’s best deal</h2>
-        <Link href="/sale" className="text-blue-600 font-medium">
-          See more
-        </Link>
-      </div>
 
       {/* Products */}
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">

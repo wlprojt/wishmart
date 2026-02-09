@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function BrandDealBanner() {
   return (
@@ -20,9 +21,9 @@ export default function BrandDealBanner() {
             Tortor purus et quis aenean tempus tellus fames.
           </p>
 
-          <button className="mt-6 text-blue-600 font-semibold hover:underline">
+          <Link href="/shop?category=Home+appliances&page=1" className="mt-6 text-blue-600 font-semibold hover:underline">
             Shop now
-          </button>
+          </Link>
         </div>
 
         {/* Right Image */}

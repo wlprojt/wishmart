@@ -52,7 +52,7 @@ export default function Refrigerator({ products }: Props) {
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Refrigerators</h2>
-        <a href="/category/refrigerators" className="text-blue-600 font-medium">
+        <a href="/shop?category=Refrigerator&page=1" className="text-blue-600 font-medium">
           See more
         </a>
       </div>
