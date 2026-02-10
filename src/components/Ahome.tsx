@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
+import Link from "next/link";
 
 export default function Ahome({ session }: { session: any }) {
   const router = useRouter();
@@ -29,20 +30,20 @@ export default function Ahome({ session }: { session: any }) {
   // if (!session) return null;
 
   // ✅ Proper logout (Google + JWT)
-  const handleLogout = async () => {
-    try {
-      await authClient.signOut(); // Google / OAuth logout
+  // const handleLogout = async () => {
+  //   try {
+  //     await authClient.signOut(); // Google / OAuth logout
 
-      await fetch("/api/auth/logout", {
-        method: "POST",
-        credentials: "include",
-      }); // clear JWT cookie
+  //     await fetch("/api/auth/logout", {
+  //       method: "POST",
+  //       credentials: "include",
+  //     }); // clear JWT cookie
 
-      router.replace("/login");
-    } catch (err) {
-      console.error("Logout failed", err);
-    }
-  };
+  //     router.replace("/login");
+  //   } catch (err) {
+  //     console.error("Logout failed", err);
+  //   }
+  // };
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -119,12 +120,12 @@ export default function Ahome({ session }: { session: any }) {
             </div>
           )}
 
-          <Button
-            onClick={handleLogout}
-            className="text-lg mt-10 w-full h-14 bg-[#29293d]"
+          <Link
+            href="/admin/orders"
+            className="text-lg mt-10 w-full h-14 bg-[#29293d] text-white flex items-center justify-center rounded-lg hover:bg-[#1a1a2c]"
           >
-            Logout
-          </Button>
+            Orders
+          </Link>
         </div>
       </div>
     </>

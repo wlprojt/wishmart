@@ -116,7 +116,7 @@ export default function CartPage() {
             <div className="flex-1">
               <p className="font-semibold">{item.title}</p>
               <p className="text-sm text-gray-500">
-                ₹{(item.sale_price ?? item.price).toLocaleString("en-IN")}
+                ${(item.sale_price ?? item.price).toLocaleString("en-IN")}
               </p>
 
               <div className="flex items-center gap-2 mt-2">
@@ -161,14 +161,14 @@ export default function CartPage() {
       <div className="flex justify-between items-center mt-6 border-t pt-4">
         <p className="text-lg font-semibold">Total</p>
         <p className="text-xl font-bold">
-          ₹{total.toLocaleString("en-IN")}
+          ${total.toLocaleString("en-IN")}
         </p>
       </div>
 
       <div className="mt-6 text-right">
-        <button className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700">
+        <Link href="/checkout" className="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700">
           Checkout
-        </button>
+        </Link>
       </div>
     </div>
   );
