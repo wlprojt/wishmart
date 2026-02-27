@@ -1,68 +1,59 @@
 // src/app/api/auth/me/route.ts
-import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
-import { verifyToken } from "@/lib/jwt";
+import { cookies } from "next/headers";
 import { connectDB } from "@/lib/db";
 import User from "@/models/User";
+import { verifyJwt } from "@/lib/jwt";
 
 export async function GET(req: Request) {
+  const auth = req.headers.get("authorization");
+  const cookieToken = (await cookies()).get("token")?.value;
+
   let token: string | undefined;
+  let source: "bearer" | "cookie" | "none" = "none";
 
-  // 1️⃣ Authorization header (Android / iOS)
-  const authHeader = req.headers.get("authorization");
-  if (authHeader?.startsWith("Bearer ")) {
-    token = authHeader.substring(7);
-  }
-
-  // 2️⃣ Cookie fallback (Web)
-  if (!token) {
-    token = (await cookies()).get("token")?.value;
+  if (auth?.startsWith("Bearer ")) {
+    token = auth.slice(7);
+    source = "bearer";
+  } else if (cookieToken) {
+    token = cookieToken;
+    source = "cookie";
   }
 
   if (!token) {
     return NextResponse.json(
-      { message: "Unauthorized" },
+      { error: "Unauthorized", debug: { source, hasCookie: !!cookieToken } },
       { status: 401 }
     );
   }
 
-  let decoded: { id: string };
-
+  let decoded: any;
   try {
-    decoded = verifyToken(token) as { id: string };
+    decoded = verifyJwt(token);
   } catch {
     return NextResponse.json(
-      { message: "Invalid token" },
+      { error: "Invalid token", debug: { source } },
       { status: 401 }
     );
   }
 
   await connectDB();
-
-  const user = await User.findById(decoded.id).select(
-    "_id email emailVerified createdAt"
-  );
+  const user = await User.findById(decoded.id);
 
   if (!user) {
     return NextResponse.json(
-      { message: "User not found" },
-      { status: 404 }
+      { error: "Unauthorized", debug: { source } },
+      { status: 401 }
     );
   }
 
-  // 🔐 Block unverified users
-  if (!user.emailVerified) {
-    return NextResponse.json(
-      { message: "Email not verified" },
-      { status: 403 }
-    );
-  }
-
-  // ✅ Safe response DTO
   return NextResponse.json({
-    id: user._id,
+    id: user._id.toString(),
+    name: user.name,
     email: user.email,
+    provider: user.provider,
+    image: user.image,
     emailVerified: user.emailVerified,
-    createdAt: user.createdAt,
+    debug: { source },
   });
 }

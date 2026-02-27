@@ -6,8 +6,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Eye, EyeOff } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 
 declare global {
   interface Window {
@@ -15,43 +15,15 @@ declare global {
   }
 }
 
-export default function LoginPage() {
+export default function RegisterPage() {
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
 
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  async function handleLogin(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await res.json().catch(() => ({}));
-
-      if (!res.ok) {
-        setError(data.error || data.message || "Invalid email or password");
-        setLoading(false);
-        return;
-      }
-
-      window.location.href = "/dashboard";
-    } catch (err) {
-      console.error(err);
-      setError("Network error. Please try again.");
-      setLoading(false);
-    }
-  }
 
   const handleGoogleLogin = async () => {
     setGoogleLoading(true);
@@ -118,6 +90,43 @@ export default function LoginPage() {
     }
   };
 
+  async function handleRegister(e: React.FormEvent) {
+    e.preventDefault();
+
+    if (password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const res = await fetch("/api/auth/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        // credentials: "include", // optional; not needed until JWT login
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        setError(data.error || data.message || "Registration failed");
+        setLoading(false);
+        return;
+      }
+
+      // ✅ go verify OTP
+      localStorage.setItem("verifyEmail", email);
+      window.location.href = "/otp"; // or "/verify-otp" (match your route)
+    } catch (err) {
+      console.error(err);
+      setError("Network error. Please try again.");
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
       <motion.div
@@ -129,33 +138,40 @@ export default function LoginPage() {
         <Card className="rounded-2xl shadow-xl bg-white text-black">
           <CardContent className="p-6 space-y-6">
             <div className="text-center">
-              <h1 className="text-2xl font-bold text-blue-600">Welcome back</h1>
-              <p className="text-sm text-zinc-500">Login to continue</p>
+              <h1 className="text-2xl font-bold text-blue-600">Create account</h1>
+              <p className="text-sm text-zinc-500">Sign up to get started</p>
             </div>
 
             <Button
-              onClick={handleGoogleLogin}
-              type="button"
-              disabled={googleLoading}
-              className="w-full py-2 rounded-lg flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-900 disabled:opacity-50"
-            >
-              {googleLoading ? (
-                <span>Signing in...</span>
-              ) : (
-                <>
-                  <Image src="/google-icon.svg" alt="Google" width={18} height={18} />
-                  Sign in with Google
-                </>
-              )}
-            </Button>
+                          onClick={handleGoogleLogin}
+                          type="button"
+                          disabled={googleLoading}
+                          className="w-full py-2 rounded-lg flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-900 disabled:opacity-50"
+                        >
+                          {googleLoading ? (
+                            <span>Signing in...</span>
+                          ) : (
+                            <>
+                              <Image src="/google-icon.svg" alt="Google" width={18} height={18} />
+                              Sign in with Google
+                            </>
+                          )}
+                        </Button>
+            
+                        <div className="flex items-center">
+                          <div className="flex-grow border-t border-gray-300" />
+                          <span className="mx-2 text-gray-500 text-sm">OR</span>
+                          <div className="flex-grow border-t border-gray-300" />
+                        </div>
 
-            <div className="flex items-center">
-              <div className="flex-grow border-t border-gray-300" />
-              <span className="mx-2 text-gray-500 text-sm">OR</span>
-              <div className="flex-grow border-t border-gray-300" />
-            </div>
+            <form onSubmit={handleRegister} className="space-y-4">
+              <Input
+                placeholder="Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
 
-            <form onSubmit={handleLogin} className="space-y-4">
               <Input
                 type="email"
                 placeholder="Email"
@@ -167,9 +183,10 @@ export default function LoginPage() {
               <div className="relative">
                 <Input
                   type={showPassword ? "text" : "password"}
-                  placeholder="Password"
+                  placeholder="Password (min 6 characters)"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  minLength={6}
                   required
                   className="pr-10"
                 />
@@ -182,12 +199,6 @@ export default function LoginPage() {
                 </button>
               </div>
 
-              <div className="flex justify-end">
-                <Link href="/forgot-password" className="text-sm text-blue-600 hover:underline">
-                  Forgot password?
-                </Link>
-              </div>
-
               {error && <p className="text-sm text-red-600">{error}</p>}
 
               <Button
@@ -195,14 +206,14 @@ export default function LoginPage() {
                 disabled={loading}
                 className="w-full rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-semibold"
               >
-                {loading ? "Please wait..." : "Login"}
+                {loading ? "Please wait..." : "Create Account"}
               </Button>
             </form>
 
             <p className="text-center text-sm text-zinc-500">
-              Don’t have an account?{" "}
-              <Link href="/register" className="text-blue-600 hover:underline">
-                Create one
+              Already have an account?{" "}
+              <Link href="/login" className="text-blue-600 hover:underline">
+                Login
               </Link>
             </p>
           </CardContent>

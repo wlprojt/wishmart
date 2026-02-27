@@ -51,7 +51,7 @@ export default function HomeAppliances({ products }: Props) {
     <section className="bg-white p-6 rounded-lg shadow">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Air conditioner​</h2>
+        <h2 className="text-2xl font-bold">Air Conditioner​</h2>
         <a href="/shop?category=Air+conditioner&page=1" className="text-blue-600 font-medium">
           See more
         </a>

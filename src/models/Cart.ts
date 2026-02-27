@@ -1,4 +1,4 @@
-// models/Cart.ts
+
 // models/Cart.ts
 import mongoose, { Schema, Document } from "mongoose";
 

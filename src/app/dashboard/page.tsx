@@ -16,37 +16,30 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function ensureJwtAndFetchUser() {
-      try {
-        // Convert Better-Auth session → JWT
-        await fetch("/api/auth/session-to-jwt", {
-          method: "POST",
-          credentials: "include",
-        });
+  async function fetchUser() {
+    try {
+      const res = await fetch("/api/auth/me", {
+        method: "GET",
+        credentials: "include",
+      });
 
-        // Fetch current user
-        const res = await fetch("/api/auth/me", {
-          method: "GET",
-          credentials: "include",
-        });
-
-        if (!res.ok) {
-          router.replace("/login");
-          return;
-        }
-
-        const data: UserType = await res.json();
-        setUser(data);
-      } catch (err) {
-        console.error("Failed to fetch user:", err);
+      if (!res.ok) {
         router.replace("/login");
-      } finally {
-        setLoading(false);
+        return;
       }
-    }
 
-    ensureJwtAndFetchUser();
-  }, [router]);
+      const data: UserType = await res.json();
+      setUser(data);
+    } catch (err) {
+      console.error("Failed to fetch user:", err);
+      router.replace("/login");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  fetchUser();
+}, [router]);
 
   async function logout() {
   try {
