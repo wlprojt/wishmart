@@ -3,7 +3,7 @@
 import { NextResponse } from "next/server";
 import { v2 as cloudinary } from "cloudinary";
 import { cookies } from "next/headers";
-import { verifyToken } from "@/lib/jwt";
+import { getUser } from "@/lib/getUser";
 
 if (!process.env.ADMIN_ID) {
   throw new Error("ADMIN_ID is not defined in env");
@@ -43,23 +43,19 @@ export async function POST(req: Request) {
       ? authHeader.substring(7)
       : undefined;
 
-    // 2️⃣ Fallback to cookies
-    if (!token) token = (await cookies()).get("token")?.value;
 
-    if (!token) {
-      console.error("No token provided");
+
+    const user = await getUser();
+              if (!user) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    
+
+
+    if (!user?.id) {
+      console.error("User invalid or missing id");
       return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
     }
 
-    // 3️⃣ Verify JWT
-    const decoded: any = verifyToken(token);
-
-    if (!decoded?.id) {
-      console.error("Token invalid or missing id");
-      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-    }
-
-    if (decoded.id !== ADMIN_ID) {
+    if (user.id !== ADMIN_ID) {
       console.error("Forbidden: not admin");
       return NextResponse.json({ message: "Forbidden: Admin only" }, { status: 403 });
     }

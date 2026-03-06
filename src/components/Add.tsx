@@ -11,7 +11,7 @@ interface Session {
   };
 }
 
-export default function AddProductPage({ session }: { session: Session }) {
+export default function AddProductPage() {
   const [title, setTitle] = useState("");
   const [price, setPrice] = useState<number | string>("");
   const [salePrice, setSalePrice] = useState<number | string>("");
@@ -23,14 +23,6 @@ export default function AddProductPage({ session }: { session: Session }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const router = useRouter();
-
-  // ✅ Admin redirect
-  // useEffect(() => {
-  //   const ADMIN_EMAIL = "rakeshvishwas730@gmail.com";
-  //   if (!session || session.user?.email !== ADMIN_EMAIL) {
-  //     router.replace("/"); // redirect non-admins
-  //   }
-  // }, [session, router]);
 
   // --- Images ---
   const handleImageChange = (index: number, value: string) => {

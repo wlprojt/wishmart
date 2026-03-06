@@ -4,46 +4,13 @@ import GooeyNav from "@/components/GooeyNav";
 import { Button } from "@/components/ui/button";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { authClient } from "@/lib/auth-client";
 import Link from "next/link";
 
-export default function Ahome({ session }: { session: any }) {
+export default function Ahome() {
   const router = useRouter();
   const [imageUrl, setImageUrl] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // ✅ Redirect safely
-//   useEffect(() => {
-//   if (!session) {
-//     router.replace("/");
-//     return;
-//   }
-
-//   const ADMIN_EMAIL = "rakeshvishwas730@gmail.com";
-
-//   if (session.user?.email !== ADMIN_EMAIL) {
-//     router.replace("/"); // 🚫 block non-admin
-//   }
-// }, [session, router]);
-
-
-  // if (!session) return null;
-
-  // ✅ Proper logout (Google + JWT)
-  // const handleLogout = async () => {
-  //   try {
-  //     await authClient.signOut(); // Google / OAuth logout
-
-  //     await fetch("/api/auth/logout", {
-  //       method: "POST",
-  //       credentials: "include",
-  //     }); // clear JWT cookie
-
-  //     router.replace("/login");
-  //   } catch (err) {
-  //     console.error("Logout failed", err);
-  //   }
-  // };
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

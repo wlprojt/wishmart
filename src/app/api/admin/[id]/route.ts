@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
 import { cookies } from "next/headers";
-import { verifyToken } from "@/lib/jwt";
+import { getUser } from "@/lib/getUser";
 
 type Params = {
   params: {
@@ -27,13 +27,12 @@ export async function GET(req: Request, context: Params) {
             ? authHeader.substring(7)
             : (await cookies()).get("token")?.value;
     
-        if (!token) {
-          return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-        }
+        const user = await getUser();
+                  if (!user) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+        
     
-        const decoded: any = verifyToken(token);
     
-        if (!decoded?.id || decoded.id !== ADMIN_ID) {
+        if (!user?.id || user.id !== ADMIN_ID) {
           return NextResponse.json(
             { message: "Forbidden: Admin only" },
             { status: 403 }
@@ -109,9 +108,10 @@ export async function DELETE(req: Request, context: Params) {
           return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
         }
     
-        const decoded: any = verifyToken(token);
-    
-        if (!decoded?.id || decoded.id !== ADMIN_ID) {
+        const user = await getUser();
+                  if (!user) return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+        
+        if (!user?.id || user.id !== ADMIN_ID) {
           return NextResponse.json(
             { message: "Forbidden: Admin only" },
             { status: 403 }

@@ -5,20 +5,12 @@ import Link from "next/link";
 import GooeyNav from "@/components/GooeyNav";
 import { useRouter } from "next/navigation";
 
-export default function ProductsAdminPage({ session }: { session: any }) {
+export default function ProductsAdminPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const router = useRouter();
 
-  // ✅ Redirect correctly
-  // useEffect(() => {
-  //   if (!session) {
-  //     router.push("/login");
-  //   }
-  // }, [session, router]);
-
-  // if (!session) return null;
 
   const fetchProducts = async () => {
     try {
